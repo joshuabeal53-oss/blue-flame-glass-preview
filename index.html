@@ -863,21 +863,29 @@ h1 .ln>span{transform:none}
 <div class="qcard rv d1">
 <h3>Get my free estimate</h3>
 <p>Takes about a minute.</p>
-<form id="qform" novalidate>
-<div class="fg">
-<div><label for="f-name">Name</label><input id="f-name" name="name" autocomplete="name" required></div>
-<div><label for="f-phone">Phone</label><input id="f-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" required></div>
-<div><label for="f-email">Email</label><input id="f-email" name="email" type="email" autocomplete="email"></div>
-<div><label for="f-city">City</label><input id="f-city" name="city" autocomplete="address-level2" list="f-cities"><datalist id="f-cities"><option value="San Antonio"></option><option value="New Braunfels"></option><option value="Cibolo"></option><option value="Canyon Lake"></option><option value="Spring Branch"></option><option value="Bulverde"></option></datalist></div>
-<div class="full"><label for="f-svc">What do you need?</label>
-<select id="f-svc" name="service"><option>Shower install</option><option>Custom windows</option><option>Commercial glass</option><option>Residential glass</option><option>Cabinetry glass</option><option>Something else</option></select></div>
-<div class="full"><label for="f-msg">Tell us about the job</label><textarea id="f-msg" name="message" placeholder="Sizes, photos you can send, timing..."></textarea></div>
-</div>
-<div aria-hidden="true" style="position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden"><label>Leave this field empty<input name="_honey" tabindex="-1" autocomplete="off"></label></div>
-<button class="btn wig" type="submit" id="fsend">Send my request</button>
-<span class="sub" id="fnote" role="status" aria-live="polite">Free estimate &middot; No obligation</span>
-</form>
-<div class="qok" id="qok" hidden role="status"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="11" fill="#12B76A"/><path d="M7 12.5l3.4 3.4L17 9" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg><h3>Request sent. Thank you!</h3><p id="qokp">We got your request and will call you soon.</p><p class="qokc">Need us sooner? Call <a data-tel="main" href="tel:+18308302583">(830) 830-BLUE</a>.</p><button class="btn ghost2" type="button" id="qagain">Send another request</button></div>
+<iframe
+    src="https://links.homeprobrandbuilder.com/widget/form/tFyBWLDfLrksq8GmCGPu"
+    style="width:100%;height:780px;min-height:780px;border:none;border-radius:8px"
+    id="inline-tFyBWLDfLrksq8GmCGPu"
+    data-layout="{'id':'INLINE'}"
+    data-trigger-type="alwaysShow"
+    data-trigger-value=""
+    data-activation-type="alwaysActivated"
+    data-activation-value=""
+    data-deactivation-type="neverDeactivate"
+    data-deactivation-value=""
+    data-form-name="Blue Flame Glass - Website Inspection Request"
+    data-height="780"
+    data-layout-iframe-id="inline-tFyBWLDfLrksq8GmCGPu"
+    data-form-id="tFyBWLDfLrksq8GmCGPu"
+    data-cookie-consent="true"
+    data-cookie-consent-provider="auto"
+    title="Blue Flame Glass - Website Inspection Request"
+    
+        >
+</iframe>
+<script src="https://links.homeprobrandbuilder.com/js/form_embed.js"></script>
+<p class="sub">If the form is unavailable, call <a href="tel:+18308302583">(830) 830-2583</a> or email <a href="mailto:info@BlueFlameGlass.org">info@BlueFlameGlass.org</a>.</p>
 </div>
 </div>
 </section>
@@ -1082,28 +1090,7 @@ function hgo(n){hi=(n+hsl.length)%hsl.length;hsl.forEach(function(x,i){x.classLi
 function hrun(){clearInterval(hti);if(reduce)return;hti=setInterval(function(){if(!document.hidden)hgo(hi+1)},4800)}
 hdt.forEach(function(d,i){d.addEventListener('click',function(){hgo(i);hrun()})});
 hrun()}
-var form=$('#qform');
-if(form){
-var fsend=$('#fsend'),fnote=$('#fnote'),qok=$('#qok'),busy=false;
-function say(m,st){fnote.textContent=m;fnote.style.color=st==='bad'?'#C0341D':(st==='ok'?'#0B7A3B':'')}
-function mailFallback(d){var body='Name: '+d.name+'\nPhone: '+d.phone+'\nEmail: '+d.email+'\nCity: '+d.city+'\nService: '+d.service+'\n\n'+d.message;window.location.href='mailto:'+CFG.EMAIL+'?subject='+encodeURIComponent('Free estimate request - '+d.service)+'&body='+encodeURIComponent(body)}
-function done(d){form.hidden=true;qok.hidden=false;var p=$('#qokp');if(p)p.textContent='Thanks, '+(d.name.split(' ')[0]||'friend')+'. We got your request and will call you soon.';form.reset();say('Free estimate \u00b7 No obligation','')}
-form.addEventListener('submit',function(e){
-e.preventDefault();if(busy)return;
-var f=form.elements;
-if(f._honey&&f._honey.value){done({name:''});return}
-var d={name:f.name.value.trim(),phone:f.phone.value.trim(),email:f.email.value.trim(),city:f.city.value.trim(),service:f.service.value,message:f.message.value.trim()};
-if(!d.name||d.phone.replace(/\D/g,'').length<7){say('Please add your name and a phone number we can reach you at.','bad');(d.name?f.phone:f.name).focus();return}
-if(d.email&&!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(d.email)){say('That email looks off. Please check it or leave it blank.','bad');f.email.focus();return}
-busy=true;fsend.disabled=true;fsend.textContent='Sending...';say('Sending your request...','');
-var url=CFG.FORM_ENDPOINT||('https://formsubmit.co/ajax/'+CFG.EMAIL);
-var pay={name:d.name,phone:d.phone,email:d.email||'not given',city:d.city||'not given',service:d.service,message:d.message||'(no message)',_subject:'New estimate request - '+d.service+' - '+d.name,_cc:'info@homeprobrandbuilder.com',_template:'table',_captcha:'false',page:location.href};
-if(d.email)pay._replyto=d.email;
-var send=window.fetch?fetch(url,{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify(pay)}).then(function(r){return r.json().then(function(j){if(!r.ok||!j||(j.success!==true&&j.success!=='true'))throw new Error('send not confirmed');})}):Promise.reject(new Error('no fetch'));
-send.then(function(){done(d)}).catch(function(){say('We could not send that online. Your email app should open with the request ready to send, or call (830) 830-BLUE.','bad');mailFallback(d)}).then(function(){busy=false;fsend.disabled=false;fsend.textContent='Send my request'});
-});
-var qa=$('#qagain');if(qa)qa.addEventListener('click',function(){qok.hidden=true;form.hidden=false;var n=$('#f-name');if(n)n.focus()});
-}
+
 })();
 </script>
 <script src="https://widgets.leadconnectorhq.com/loader.js" data-resources-url="https://widgets.leadconnectorhq.com/chat-widget/loader.js" data-widget-id="6ad68a99d28aca7d199efdfd"></script>
