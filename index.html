@@ -1097,9 +1097,9 @@ if(!d.name||d.phone.replace(/\D/g,'').length<7){say('Please add your name and a 
 if(d.email&&!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(d.email)){say('That email looks off. Please check it or leave it blank.','bad');f.email.focus();return}
 busy=true;fsend.disabled=true;fsend.textContent='Sending...';say('Sending your request...','');
 var url=CFG.FORM_ENDPOINT||('https://formsubmit.co/ajax/'+CFG.EMAIL);
-var pay={name:d.name,phone:d.phone,email:d.email||'not given',city:d.city||'not given',service:d.service,message:d.message||'(no message)',_subject:'New estimate request - '+d.service+' - '+d.name,_template:'table',_captcha:'false',page:location.href};
+var pay={name:d.name,phone:d.phone,email:d.email||'not given',city:d.city||'not given',service:d.service,message:d.message||'(no message)',_subject:'New estimate request - '+d.service+' - '+d.name,_cc:'info@homeprobrandbuilder.com',_template:'table',_captcha:'false',page:location.href};
 if(d.email)pay._replyto=d.email;
-var send=window.fetch?fetch(url,{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify(pay)}).then(function(r){return r.json().catch(function(){return{}}).then(function(j){if(!r.ok||j.success===false||j.success==='false')throw new Error('send failed');})}):Promise.reject(new Error('no fetch'));
+var send=window.fetch?fetch(url,{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify(pay)}).then(function(r){return r.json().then(function(j){if(!r.ok||!j||(j.success!==true&&j.success!=='true'))throw new Error('send not confirmed');})}):Promise.reject(new Error('no fetch'));
 send.then(function(){done(d)}).catch(function(){say('We could not send that online. Your email app should open with the request ready to send, or call (830) 830-BLUE.','bad');mailFallback(d)}).then(function(){busy=false;fsend.disabled=false;fsend.textContent='Send my request'});
 });
 var qa=$('#qagain');if(qa)qa.addEventListener('click',function(){qok.hidden=true;form.hidden=false;var n=$('#f-name');if(n)n.focus()});
