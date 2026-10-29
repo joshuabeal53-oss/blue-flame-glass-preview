@@ -1039,7 +1039,7 @@ else{clearInterval(timer);timer=null}
 svc.addEventListener('pointerdown',function(){svc.classList.add('paused');clearInterval(timer);timer=null});
 }else{svc.classList.add('paused')}
 $$('[data-open]').forEach(function(a){a.addEventListener('click',function(){show(a.getAttribute('data-open'),true)})});
-$$('[data-svc]').forEach(function(a){a.addEventListener('click',function(){var s=$('#f-svc'),v=a.getAttribute('data-svc');[].forEach.call(s.options,function(o){if(o.text===v)s.value=o.text})})});
+$$('[data-svc]').forEach(function(a){a.addEventListener('click',function(){var s=$('#f-svc'),v=a.getAttribute('data-svc');if(s)[].forEach.call(s.options,function(o){if(o.text===v)s.value=o.text})})});
 var pane=$('#pane'),pr=$('#paneR');
 if(pane&&pr){var setP=function(){pane.style.setProperty('--p',pr.value+'%')};pr.addEventListener('input',function(){setP();$('.knob',pane).style.animation='none'});setP()}
 (function(){
@@ -1094,4 +1094,5 @@ hrun()}
 })();
 </script>
 <script src="https://widgets.leadconnectorhq.com/loader.js" data-resources-url="https://widgets.leadconnectorhq.com/chat-widget/loader.js" data-widget-id="6adf9d448147ba697c035ae9"></script>
+<script src="/tracking.js?v=20261029a" defer></script>
 </html>
