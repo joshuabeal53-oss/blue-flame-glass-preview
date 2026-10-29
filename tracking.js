@@ -128,8 +128,16 @@
     });
   }
   // Only inspect the widget's public open/closed state and control labels; never message contents.
-  var chatBound=false;
+  var chatBound=false,chatSubmitBound=false;
+  function bindChatSubmission(){
+    var api=window.leadConnector&&window.leadConnector.chatWidget;
+    if(chatSubmitBound||!api||typeof api.registerBeforeSubmit!=='function')return;
+    api.registerBeforeSubmit(function(){emit('chat_form_attempt',{widget:'blue_flame_live_chat'});return true;});
+    chatSubmitBound=true;
+  }
+  window.addEventListener('LC_chatWidgetLoaded',bindChatSubmission);
   function bindChat(){
+    bindChatSubmission();
     if(chatBound)return;
     var host=document.querySelector('chat-widget'),root=host&&host.shadowRoot,active=root&&root.querySelector('[data-active]');
     if(!root||!active)return;
