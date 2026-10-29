@@ -1,16 +1,20 @@
-/* Blue Flame Glass GA4. No form answers, contact IDs or chat text enter Analytics. */
+/* Blue Flame Glass measurement. No form answers, contact IDs or chat text enter Google tags. */
 (function () {
   'use strict';
   if (window.__bfgAnalytics) return;
   window.__bfgAnalytics = true;
   var measurement = 'G-3GDVTLC0P5';
+  var adsMeasurement = 'AW-18544817844';
+  var websiteCall = adsMeasurement + '/ZyVMCN_CwK4dELTt7YpF';
   var formId = '4NeHVu74fxbDA1SBNoIs';
   var locationId = 'QxV1Fc9KZngnILCto29e';
-  var choiceKey = 'bfg_analytics_choice_v1';
+  // A fresh choice is required because v1 allowed Analytics only.
+  var choiceKey = 'bfg_measurement_choice_v2';
   var production = /^(www\.)?blueflameglass\.net$/.test(location.hostname);
   var debug = new URLSearchParams(location.search).get('bfg_debug') === '1';
   var choice = '', loaded = false, leadSeen = false, formStarted = false;
   var seenSections = {}, seenDepths = {};
+  var phoneChanges = [], phoneLinks = [];
   try { choice = localStorage.getItem(choiceKey) || ''; } catch (_) {}
   window.dataLayer = window.dataLayer || [];
   window.gtag = window.gtag || function () { window.dataLayer.push(arguments); };
@@ -29,41 +33,68 @@
   }
   function emit(name, params) {
     if (!loaded || choice !== 'granted' || (!production && !debug)) return;
-    window.gtag('event', name, Object.assign({site_id:'blue_flame_glass',page_location:cleanUrl(location.href,true),page_referrer:cleanUrl(document.referrer,false),test_traffic:debug?'yes':'no'},debug?{debug_mode:true}:{},params||{}));
+    window.gtag('event', name, Object.assign({send_to:measurement,site_id:'blue_flame_glass',page_location:cleanUrl(location.href,true),page_referrer:cleanUrl(document.referrer,false),test_traffic:debug?'yes':'no'},debug?{debug_mode:true}:{},params||{}));
+  }
+  function replaceMainPhone(formatted, mobile) {
+    if (choice !== 'granted' || !/^[+\d ()-]+$/.test(formatted) || !/^\+?\d{10,15}$/.test(mobile)) return;
+    restoreMainPhone();
+    document.querySelectorAll('a[href^="tel:"]').forEach(function(a){
+      if (a.getAttribute('href').replace(/\D/g,'') !== '18308302583') return;
+      phoneLinks.push({el:a,href:a.getAttribute('href')});
+      a.setAttribute('href','tel:+'+mobile.replace(/\D/g,''));
+    });
+    var walker=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT), node;
+    while ((node=walker.nextNode())) {
+      if (node.parentElement.closest('script,style,noscript,#bfg-analytics')) continue;
+      var next=node.nodeValue.replace(/\(830\) 830-(?:BLUE(?: \(2583\))?|2583)/g,formatted);
+      if(next!==node.nodeValue){phoneChanges.push({node:node,value:node.nodeValue});node.nodeValue=next;}
+    }
+  }
+  function restoreMainPhone(){
+    phoneChanges.forEach(function(p){p.node.nodeValue=p.value;});phoneChanges=[];
+    phoneLinks.forEach(function(p){p.el.setAttribute('href',p.href);});phoneLinks=[];
   }
   function start() {
     window['ga-disable-' + measurement] = false;
-    window.gtag('consent','update',{analytics_storage:'granted'});
+    window['ga-disable-' + adsMeasurement] = false;
+    window.gtag('consent','update',{analytics_storage:'granted',ad_storage:'granted',ad_user_data:'granted',ad_personalization:'denied'});
     if (!loaded && (production || debug)) {
       loaded = true;
       window.gtag('js',new Date());
+      window.gtag('set','ads_data_redaction',true);
       window.gtag('config',measurement,{send_page_view:false,allow_google_signals:false,allow_ad_personalization_signals:false,page_location:cleanUrl(location.href,true),page_referrer:cleanUrl(document.referrer,false)});
+      window.gtag('config',adsMeasurement,{send_page_view:false,allow_ad_personalization_signals:false,page_location:cleanUrl(location.href,true),page_referrer:cleanUrl(document.referrer,false)});
+      window.gtag('config',websiteCall,{phone_conversion_number:'(830) 830-2583',phone_conversion_callback:replaceMainPhone,phone_conversion_options:{timeout:5000,cache:true}});
       var tag=document.createElement('script'); tag.async=true; tag.src='https://www.googletagmanager.com/gtag/js?id='+measurement; document.head.appendChild(tag);
       emit('page_view');
       measureScroll();
       document.querySelectorAll('#bfg section[id]').forEach(function(s){ if (visible(s)) measureSection(s.id); });
+    } else if (loaded) {
+      window.gtag('config',websiteCall,{phone_conversion_number:'(830) 830-2583',phone_conversion_callback:replaceMainPhone,phone_conversion_options:{timeout:5000,cache:true}});
     }
   }
   function revoke() {
     window['ga-disable-' + measurement] = true;
-    window.gtag('consent','update',{analytics_storage:'denied'});
+    window['ga-disable-' + adsMeasurement] = true;
+    window.gtag('consent','update',{analytics_storage:'denied',ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied'});
+    restoreMainPhone();
     document.cookie.split(';').forEach(function(p){
-      var n=p.split('=')[0].trim(); if (!/^_ga($|_)/.test(n)) return;
+      var n=p.split('=')[0].trim(); if (!/^(_ga($|_)|_gcl_|gwcc$)/.test(n)) return;
       ['',location.hostname,'.'+location.hostname,'.blueflameglass.net'].forEach(function(d){document.cookie=n+'=; Max-Age=0; path=/; SameSite=Lax'+(d?'; domain='+d:'');});
     });
   }
   var style=document.createElement('style');
   style.textContent='#bfg-analytics{position:fixed;bottom:18px;left:18px;right:90px;z-index:99999;max-width:600px;padding:18px;background:#06182b;color:#fff;border:1px solid #38c6ff;border-radius:10px;box-shadow:0 6px 28px #0005;font:14px/1.5 Inter,system-ui,sans-serif}#bfg-analytics[hidden]{display:none}#bfg-analytics p{margin:0 0 12px}#bfg-analytics button,#bfg-analytics-choice{min-height:44px;padding:9px 13px;border:1px solid #38c6ff;border-radius:5px;cursor:pointer;font:600 14px Inter,system-ui,sans-serif}#bfg-analytics button{margin:0 8px 8px 0;background:#fff;color:#06182b}#bfg-analytics a{color:#8edfff}#bfg-analytics-choice{display:block;margin:18px auto;background:#06182b;color:#fff}@media(max-width:500px){#bfg-analytics{left:10px;right:10px;bottom:80px;max-height:45vh;overflow:auto}}';
   document.head.appendChild(style);
-  var banner=document.createElement('section'); banner.id='bfg-analytics'; banner.setAttribute('aria-label','Analytics choices');
-  var text=document.createElement('p'); text.textContent='Allow optional Google Analytics cookies to measure website visits, clicks and completed requests? Your form answers and chat messages are not sent to Analytics.'; banner.appendChild(text);
+  var banner=document.createElement('section'); banner.id='bfg-analytics'; banner.setAttribute('aria-label','Measurement choices');
+  var text=document.createElement('p'); text.textContent='Allow optional Google Analytics and Google Ads measurement cookies to measure visits, clicks, completed requests and calls from ads? Google may show a forwarding number that reaches Blue Flame. Your form answers and chat messages are not sent to these tags. Personalized advertising stays off.'; banner.appendChild(text);
   function choose(v) { choice=v; try{localStorage.setItem(choiceKey,v);}catch(_){} banner.hidden=true; if(v==='granted')start();else revoke(); }
   function button(label,handler) { var b=document.createElement('button'); b.type='button';b.textContent=label;b.addEventListener('click',handler);return b; }
-  banner.appendChild(button('Allow analytics',function(){choose('granted');}));
-  banner.appendChild(button('Decline analytics',function(){choose('denied');}));
+  banner.appendChild(button('Allow measurement',function(){choose('granted');}));
+  banner.appendChild(button('Decline optional cookies',function(){choose('denied');}));
   var policy=document.createElement('a');policy.href='/privacy-policy/';policy.textContent='Privacy policy';banner.appendChild(policy);
   banner.hidden=!!choice;document.body.appendChild(banner);
-  var settings=button('Analytics choices',function(){banner.hidden=false;});settings.id='bfg-analytics-choice';document.body.appendChild(settings);
+  var settings=button('Measurement choices',function(){banner.hidden=false;});settings.id='bfg-analytics-choice';document.body.appendChild(settings);
   if(choice==='granted')start();
 
   function placement(el) {
